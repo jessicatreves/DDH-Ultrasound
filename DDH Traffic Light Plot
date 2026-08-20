@@ -1,0 +1,94 @@
+# Install required packages if not already installed:
+# install.packages(c("ggplot2", "dplyr", "tidyr"))
+
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# 1. Input the exact data from your 27-study table
+ddh_data <- data.frame(
+  Study = c(
+    "Alshameeri et al. (2014)", "Antoniak et al. (2021)", "Brusalis et al. (2017)", "Donnelly et al. (2015)", "Fludder et al. (2023)", "Gwynne Jones et al. (2006)", "Haertle et al. (2023)", "Imrie et al. (2010)", "Jaiswal et al. (2010)", "Jiang et al. (2026)", "Ki et al. (2025)", "Kim et al. (2022)", "Laborie et al. (2013)", "Kohler and Hell (2003)", "Morris et al. (2019)", "Morris et al. (2021)", "Mulrain et al. (2020)", "Olsen et al. (2018)", "Osarumwense et al. (2007)", "Pan et al. (2022)", "Rafique et al. (2007)", "Roovers et al. (2005)", "Rosendahl et al. (1994)", "Schmitt et al. (2018)", "Tafazal et al. (2015)", "Vane et al. (2005)", "Walton et al. (2022)"
+  ),
+  D1 = c("Green", "Green", "Green", "Green X", "Green", "Green X", "Green", "Yellow", "Green", "Green", "Green", "Green", "Green", "Green", "Yellow", "Green", "Green", "Green", "Green", "Green", "Green", "Green", "Green", "Green", "Green", "Yellow", "Green"),
+  D2 = c("Green", "Yellow", "Yellow", "Yellow", "Green X", "Green", "Green", "Yellow", "Yellow", "Green", "Green", "Yellow", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Yellow", "Green", "Green", "Green", "Yellow", "Yellow", "Yellow", "Yellow"),
+  D3 = c("Yellow", "Green", "Green", "Yellow", "Yellow", "Green X", "Yellow", "Yellow", "Green", "Green", "Yellow", "Yellow", "Yellow", "Red", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Yellow*", "Green", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Yellow"),
+  D4 = c("Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Purple", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Purple"),
+  D5 = c("Yellow", "Yellow", "Yellow", "Yellow", "Green", "Green", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Yellow"),
+  D6 = c("Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Yellow"),
+  D7 = c("Yellow", "Green", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Green", "Yellow", "Green", "Green", "Green", "Green", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Green", "Green", "Green", "Green", "Yellow"),
+  D8 = c("Green", "Green", "Green", "Green X", "Green", "Green", "Yellow", "Green", "Green", "Green", "Yellow", "Yellow", "Green", "Yellow", "Green", "Green", "Green", "Green", "Green", "Green", "Green", "Green X**", "Green", "Green", "Yellow", "Yellow", "Green"),
+  check.names = FALSE
+)
+
+# 2. Reshape and map data for Cochrane-style traffic light plot
+ddh_matrix <- ddh_data %>%
+  pivot_longer(
+    cols = starts_with("D"),
+    names_to = "Domain",
+    values_to = "Status"
+  ) %>%
+  mutate(
+    # Order studies alphabetically (reversed so A is at the top of the y-axis)
+    Study = factor(Study, levels = rev(sort(unique(Study)))),
+    
+    # Define base colors for the circles
+    Base_Color = case_when(
+      grepl("Green", Status) ~ "#53b848", # Green
+      grepl("Yellow", Status) ~ "#fcd116", # Yellow
+      grepl("Red", Status) ~ "#cc3333",    # Red
+      grepl("Purple", Status) ~ "#9b59b6"  # Purple
+    ),
+    
+    # Define internal icons corresponding to status
+    Icon = case_when(
+      grepl("X", Status) ~ "X",
+      grepl("Green", Status) ~ "+",
+      grepl("Red", Status) ~ "-",
+      grepl("Yellow", Status) ~ "-",
+      grepl("Purple", Status) ~ "?"
+    )
+  )
+
+# 3. Generate the Cochrane-style traffic light matrix
+p_matrix <- ggplot(ddh_matrix, aes(x = Domain, y = Study)) +
+  # Subtle grid background
+  geom_tile(color = "#e5e5e5", fill = "white", linewidth = 0.5) +
+  
+  # Colored circular indicators
+  geom_point(aes(fill = Base_Color), shape = 21, size = 8, color = "#111111", stroke = 0.5) +
+  
+  # Text icons inside circles
+  geom_text(aes(label = Icon), size = 4, fontface = "bold", color = "#111111") +
+  
+  # Map exact hex colors
+  scale_fill_identity() +
+  
+  # Move x-axis labels to the top
+  scale_x_discrete(position = "top") +
+  
+  # Clean academic labeling
+  labs(
+    title = "Diagnostic Screening Criteria / Reporting Status",
+    x = NULL,
+    y = NULL,
+    caption = "Domains:\nD1: Alpha angle. D2: Beta angle. D3: Femoral head coverage.\nD4: Straight line of ilium, labrum, acetabulum, femoral head, femoral neck.\nD5: Acetabular morphology. D6: Lateral position. D7: Dynamic ultrasound. D8: Clinical stability.\n\nSymbols: [+] Adequate. [-] Inadequate. [X] Measured but abnormal. [?] Pending review.\n[*] Sufficient femoral head coverage noted for 1 of 2 patients. [**] n=19 had abnormal clinical results."
+  ) +
+  
+  # Minimalist styling
+  theme_minimal(base_size = 11, base_family = "sans") +
+  theme(
+    plot.title = element_text(face = "bold", size = 13, hjust = 0.5, margin = margin(b = 15)),
+    axis.text.y = element_text(size = 9.5, color = "#111111"),
+    axis.text.x.top = element_text(face = "bold", size = 10, color = "#111111"),
+    panel.grid = element_blank(),
+    plot.caption = element_text(size = 9, color = "#444444", hjust = 0, margin = margin(t = 15)),
+    plot.caption.position = "plot",
+    plot.margin = margin(t = 15, r = 15, b = 15, l = 15)
+  )
+
+# Display the plot
+print(p_matrix)
+
+# Export as a vector PDF for journal submission
+# ggsave("DDH_TrafficLight_Matrix.pdf", plot = p_matrix, width = 8.5, height = 10, device = "pdf")
