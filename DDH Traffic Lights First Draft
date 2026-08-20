@@ -1,0 +1,123 @@
+# Install required packages if not already installed:
+# install.packages(c("ggplot2", "dplyr", "tidyr", "scales"))
+
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(scales)
+
+# 1. Input the exact data from your 15-study table
+ddh_data <- data.frame(
+  Study = c(
+    "Haertlé et al., 2023", "Salton et al., 2023", "Pan et al., 2022",
+    "Schmitt et al., 2018", "Olsen et al., 2018", "Imrie et al., 2010",
+    "Rafique et al., 2007", "Jones et al., 2006", "Vane et al., 2005",
+    "Roovers et al., 2005", "Kohler et al., 2003", "Ki et al., 2024",
+    "Fludder et al., 2023", "Morris et al., 2021", "Morris et al., 2019"
+  ),
+  D1 = c("Reported", "Reported", "Reported", "Reported", "Reported", "Not reported", "Reported", "Reported", "Not reported", "Not reported", "Reported", "Reported", "Reported", "Not reported", "Reported"),
+  D2 = c("Reported", "Not reported", "Not reported", "Not reported", "Reported", "Not reported", "Reported", "Reported", "Not reported", "Not reported", "Reported", "Reported", "Not reported", "Not reported", "Not reported"),
+  D3 = c("Not reported", "Reported", "Reported", "Not reported", "Not reported", "Not reported", "Not reported", "Reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported", "Reported"),
+  D4 = c("Not reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported", "Reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported"),
+  D5 = c("Not reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported", "Reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported"),
+  D6 = c("Reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported", "Reported", "Reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported", "Not reported"),
+  D7 = c("Not reported", "Reported", "Reported", "Reported", "Reported", "Not reported", "Reported", "Reported", "Not reported", "Reported", "Reported", "Reported", "Reported", "Reported", "Reported"),
+  D8 = rep("Blank / Not evaluated", 15), # Dynamic testing kept blank/unevaluated
+  check.names = FALSE
+)
+
+# 2. Define domain labels for clear stand-alone presentation
+domain_labels <- c(
+  "D1" = "D1: Alpha angle",
+  "D2" = "D2: Beta angle",
+  "D3" = "D3: >50% femoral head coverage",
+  "D4" = "D4: Lateral positioning of infant",
+  "D5" = "D5: Straight line of ilium, labrum...\n(acetabulum, femoral head/neck)",
+  "D6" = "D6: Acetabular roof shape",
+  "D7" = "D7: Clinical stability",
+  "D8" = "D8: Dynamic testing"
+)
+
+# 3. Reshape data and calculate aggregate percentages per domain
+ddh_summary <- ddh_data %>%
+  pivot_longer(
+    cols = starts_with("D"),
+    names_to = "Domain",
+    values_to = "Status"
+  ) %>%
+  group_by(Domain, Status) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  group_by(Domain) %>%
+  mutate(
+    Percentage = Count / sum(Count),
+    # Map descriptive domain names and order from D8 at the bottom to D1 at the top
+    Domain_Label = factor(domain_labels[Domain], levels = rev(domain_labels)),
+    # Order status levels logically for stacking
+    Status = factor(Status, levels = c("Reported", "Not reported", "Denied", "Blank / Not evaluated"))
+  )
+
+# 4. Define publication color palette matching your traffic light plot
+status_colors <- c(
+  "Reported"              = "#53b848", # Green
+  "Not reported"          = "#fcd116", # Yellow
+  "Denied"                = "#cc3333", # Red
+  "Blank / Not evaluated" = "#e0e0e0"  # Soft Neutral Gray
+)
+
+# 5. Generate the Cochrane-style summary bar chart
+p_bar <- ggplot(ddh_summary, aes(x = Percentage, y = Domain_Label, fill = Status)) +
+  # Draw stacked horizontal bars with subtle separation borders
+  geom_bar(stat = "identity", position = "fill", color = "#333333", linewidth = 0.3, width = 0.7) +
+  
+  # Apply matching colors
+  scale_fill_manual(
+    values = status_colors,
+    name = "Reporting Status",
+    drop = FALSE
+  ) +
+  
+  # Format x-axis as percentages (0% to 100%)
+  scale_x_continuous(
+    labels = percent_format(accuracy = 1),
+    expand = expansion(mult = c(0, 0.02))
+  ) +
+  
+  # Clean academic labeling
+  labs(
+    title = "Overall Reporting Frequency of Diagnostic Screening Criteria",
+    subtitle = "Aggregate proportion across all included studies (n = 15)",
+    x = "Percentage of Studies",
+    y = NULL
+  ) +
+  
+  # Academic minimalist theme styling
+  theme_minimal(base_size = 11, base_family = "sans") +
+  theme(
+    # Clean gridlines: keep vertical reference lines, remove horizontal
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.x = element_line(color = "#e5e5e5", linewidth = 0.5),
+    panel.grid.minor.x = element_blank(),
+    
+    # Typography and axis formatting
+    plot.title = element_text(face = "bold", size = 13, hjust = 0, margin = margin(b = 4)),
+    plot.subtitle = element_text(size = 10, color = "#555555", hjust = 0, margin = margin(b = 15)),
+    axis.text.y = element_text(face = "bold", size = 10, color = "#111111"),
+    axis.text.x = element_text(size = 9.5, color = "#333333"),
+    axis.title.x = element_text(face = "bold", size = 10.5, margin = margin(t = 10)),
+    
+    # Legend placement at the bottom for balanced figure dimensions
+    legend.position = "bottom",
+    legend.title = element_text(face = "bold", size = 10),
+    legend.text = element_text(size = 9.5),
+    legend.margin = margin(t = 10, r = 0, b = 0, l = 0),
+    
+    # Margins
+    plot.margin = margin(t = 15, r = 20, b = 15, l = 15)
+  )
+
+# Display the plot
+print(p_bar)
+
+# Export as a vector PDF for journal submission
+# ggsave("DDH_Reporting_Summary_BarChart.pdf", plot = p_bar, width = 8.5, height = 5.5, device = "pdf")
