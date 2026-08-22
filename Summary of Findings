@@ -1,27 +1,28 @@
-# Install required packages if not already installed:
+# 1. Install required packages if not already installed:
 # install.packages(c("dplyr", "gt"))
 
 library(dplyr)
 library(gt)
 
-# 1. Hardcode the structured data exactly matching the Excel file
+# 2. Hardcode the structured data exactly matching the updated Excel file
 summary_data <- data.frame(
-  `Author` = c("Alshameeri et al. (2014)", "Antoniak et al. (2021)", "Brusalis et al. (2017)", "Donnelly et al. (2015)", "Fludder et al. (2023)", "Gwynne Jones et al. (2006)", "Haertle et al. (2023)", "Imrie et al. (2010)", "Jaiswal et al. (2010)", "Jiang et al. (2026)", "Ki et al. (2025)", "Kim et al. (2022)", "Kohler and Hell (2003)", "Laborie et al. (2013)", "Morris et al. (2019)", "Morris et al. (2021)", "Mulrain et al. (2020)", "Olsen et al. (2018)", "Osarumwense et al. (2007)", "Pan et al. (2022)", "Rafique et al. (2007)", "Roovers et al. (2005)", "Rosendahl et al. (1994)", "Schmitt et al. (2018)", "Tafazal et al. (2015)", "Vane et al. (2005)", "Walton et al. (2022)"),
-  `Year of Screening` = c("NR", "NR", "NR", "2008-2010", "NR", "NR", "2014-2022", "NR", "NR", "NR", "2017-2019", "2012-2019", "1999-2001", "1991-2006", "2012-2014", "2008-2014", "2015", "1998-2006", "NR", "NR", "NR", "1992-1999", "1988-1990", "NR", "2008-2011", "1995-2001", "NR"),
-  `Total cohort (n)` = c("1", "292", "47", "645", "2", "5", "92", "300", "1", "1", "929", "292", "14", "11190", "68", "133", "829", "4245", "181", "2", "1", "7236", "11925", "1", "119", "15397", "1"),
-  `Late dysplasia cohort w/ false negative ultrasound  (n)` = c("1", "11", "5", "1", "1", "5", "45", "38", "1", "1", "2", "29", "6", "2", "5", "3", "63", "2", "2", "2", "1", "27", "7", "1", "6", "1", "1"),
-  `Dysplastic hips (n)` = c("1", "11", "10", "1", "2", "7", "45", "NR", "1", "1", "3", "NR", "7", "NR", "NR", "3", "84", "NR", "2", "2", "1", "NR", "NR", "1", "NR", "1", "1"),
-  `Sex` = c("F", "2M 9F", "NR", "F", "F", "F", "6M 39F", "NR", "F", "M", "NR", "16M 13F", "NR", "2F", "NR", "NR", "13M 50F", "2 F", "2 F ", "2 F", "F", "NR", "NR", "F", "NR", "F", "F"),
-  `Time of late dysplasia (months)` = c("18", "10  (range 3-18)", "6.4 ± 0.5 mean", "20", "9", "6, 22, 7, 9, 7", "NR", "Mean 5 (range 4-6)", "30", "5", "592 days, 1091 days", "15.0 ± 1.9", "NR", "Median 16 (6-156) weeks", "13±1", "20.7 ± 6.7 mo", "6", "7, 11", "mean 12 (range 7-22)", "9, 9", "12", "NR", "4.5 (2.5-18)", "21", "Median 6.6 (range 4.9-28.9)", "23", "5"),
-  `Method of diagnosing the late dysplasia ` = c("Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "NR", "NR", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph"),
-  `Reason for follow-up` = c("Symptomatic", "Routine follow-up", "Routine follow-up", "Symptomatic", "Routine follow-up", "Routine follow-up", "Symptomatic", "Routine follow-up", "Symptomatic", "Symptomatic", "Symptomatic", "Routine follow-up", "Routine follow-up", "Routine follow-up", "Routine follow-up", "Routine follow-up", "Routine follow-up", "Routine follow-up", "Routine follow-up", "Routine follow-up", "Symptomatic", "Routine follow-up", "Symptomatic, routine follow-up", "Symptomatic", "Radiological surveillance", "NR", "Symptomatic"),
-  `Breech (n)` = c("N", "Y", "Y", "NR", "Y", "Y (n=1)", "NR", "Y", "N", "N", "NR", "Y", "NR", "NR", "Y", "Y", "Y (n=15)", "NR", "NR", "Y, Y", "Y", "NR", "NR", "N", "N", "Breech", "Y"),
-  `Family history (n)` = c("Y", "NR", "Y (n=8)", "NR", "N", "Y (n=1)", "NR", "NR", "N", "N", "NR", "N", "NR", "NR", "N", "NR", "Y (n=27)", "NR", "Y", "NR, Y", "Y", "Y (n=1)", "NR", "N", "Y", "N", "N"),
-  `Initial US (weeks)` = c("5", "10 mean (5-13 range)", "6.9 ± 1.7 mean", "22", "14", "35, 31, 16, 20, 36 days", "3-8", "mean 6 ", "6", "6", "NR", "11.0 ± 6.5 weeks (mean)", "6-8", "2-5 days", "4-6", "NR", "6", "1-3 days", "mean 6.1 (range 1-24)", "6, 6", "4 days", "1, 2, 3 months", "24-48 hours", "5", "Median 5.6 (range 1.7-14)", "31 days, 45 days", "6"),
+  `Author` = c("Alshameeri et al. (2014)", "Antoniak et al. (2021)", "Brusalis et al. (2017)", "Donnelly et al. (2015)", "Fludder et al. (2023)", "Jones et al. (2006)", "Haertle et al. (2023)", "Imrie et al. (2010)", "Jaiswal et al. (2010)", "Jiang et al. (2026)", "Ki et al. (2025)", "Kim et al. (2022)", "Laborie et al. (2013)", "Kohler and Hell (2003)", "Morris et al. (2019)", "Morris et al. (2021)", "Mulrain et al. (2020)", "Olsen et al. (2018)", "Osarumwense et al. (2007)", "Pan et al. (2022)", "Rafique et al. (2007)", "Roovers et al. (2005)", "Rosendahl et al. (1994)", "Schmitt et al. (2018)", "Tafazal and Flowers (2015)", "Vane et al. (2005)", "Walton et al. (2022)"),
+  `Study design` = c("Case report", "Retrospective cohort study", "Retrospective cohort study", "Retrospective cohort study", "Case report", "Case series", "Retrospective cohort study", "Retrospective cohort study", "Case report", "Case report", "Retrospective cohort study", "Retrospective cohort study", "Prospective observational study", "Case series", "Prospective comparative trial", "Prospective cohort study", "Retrospective cohort study", "Retrospective cohort study", "Retrospective cohort study", "Case series", "Case report", "Prospective cohort study", "Randomised control trial", "Case report", "Retrospective cohort study", "Retrospective cohort study", "Case study"),
+  `Country` = c("United Kingdom", "United States", "United States", "United Kingdom", "Australia", "New Zealand", "Germany", "USA", "United Kingdom", "Canada", "Hong Kong", "Seoul", "Norway", "Switzerland", "United Kingdom", "United States", "Ireland", "Norway", "United Kingdom", "United States", "United Kingdom", "Netherlands", "Norway", "United States", "United Kingdom", "New Zealand", "United Kingdom"),
+  `Year of Screening` = c("NR", "NR", "NR", "2008-2010", "NR", "NR", "2014-2022", "NR", "NR", "NR", "2017-2019", "2012-2019", "1991-2006", "1999-2001", "2012-2014", "2008-2014", "2015", "1998-2006", "NR", "NR", "NR", "1992-1999", "1988-1990", "NR", "2008-2011", "1995-2001", "NR"),
+  `Total cohort (n)` = c("1", "292", "47", "645", "2", "5", "92", "300", "1", "1", "929", "292", "11190", "14", "68", "133", "829", "4245", "181", "2", "1", "7236", "11925", "1", "119", "15397", "1"),
+  `Target cohort (n)` = c("1", "11", "5", "1", "1", "5", "45", "38", "1", "1", "2", "29", "2", "6", "5", "3", "63", "2", "2", "2", "1", "27", "7", "1", "6", "1", "1"),
+  `Dysplastic hips` = c("1", "11", "10", "1", "2", "7", "45", "NR", "1", "1", "3", "NR", "NR", "7", "NR", "3", "84", "NR", "2", "2", "1", "NR", "NR", "1", "NR", "1", "1"),
+  `Sex (M/F)` = c("F", "2/9", "NR", "F", "F", "F", "6/39", "NR", "F", "M", "NR", "16/13", "2F", "NR", "NR", "NR", "13/50", "2 F", "2 F ", "2 F", "F", "NR", "NR", "F", "NR", "F", "F"),
+  `Breech (n)` = c("N", "Y", "Y", "NR", "Y", "Y (1)", "NR", "Y", "N", "N", "NR", "Y", "NR", "NR", "Y", "Y", "Y (15)", "NR", "NR", "Y, Y", "Y", "NR", "NR", "N", "N", "Breech", "Y"),
+  `Family history (n)` = c("Y", "NR", "Y (8)", "NR", "N", "Y (1)", "NR", "NR", "N", "N", "NR", "N", "NR", "NR", "N", "NR", "Y (27)", "NR", "Y", "NR, Y", "Y", "Y (1)", "NR", "N", "Y", "N", "N"),
+  `Initial ultrasound (weeks)` = c("5", "10 (5-13)*", "6.9 ± 1.7*", "22", "14", "5, 4, 2, 3, 5 ", "1", "6* ", "6", "6", "NR", "11.0 ± 6.5*", "<1", "1", "<1", "NR", "6", "<1", "6.1 (1-24)*", "6, 6", "4 days", "4, 9, 13", "<1", "<1", "5.6 (1.7-14)**", "4, 6", "6"),
+  `Diagnosis of late dysplasia (modality)` = c("Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "NR", "NR", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph", "Pelvic radiograph"),
+  `Time of late dysplasia (months)` = c("18", "10  (3-18)*", "6.4 ± 0.5*", "20", "9", "6, 22, 7, 9, 7", "NR", "5*", "30", "5", "19, 36", "15.0 ± 1.9*", "4 (1-36)**", "NR", "13±1*", "20.7 ± 6.7*", "6", "7, 11", "12 (7-22)*", "9, 9", "12", "NR", "4.5 (2.5-18) ", "21", "6.6 (4.9-28.9)", "23", "5"),
   check.names = FALSE
 )
 
-# 2. Generate the publication-ready summary of findings table
+# 3. Generate the publication-ready summary of findings table
 summary_table <- summary_data %>%
   gt() %>%
   
@@ -50,9 +51,9 @@ summary_table <- summary_data %>%
     columns = -1
   ) %>%
   
-  # Add footnotes for abbreviations
+  # Add footnotes for abbreviations and specific formatting rules
   tab_source_note(
-    source_note = "NR = Not reported. US = Ultrasound."
+    source_note = md("NR = Not reported. US = Ultrasound.<br>\\* Mean (range)<br>\\*\\* Median (range)<br>Units of time were converted where possible (e.g., 1 month = 4.3 weeks).")
   )
 
 # Display the table
