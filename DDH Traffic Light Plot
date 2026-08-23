@@ -13,7 +13,7 @@ ddh_data <- data.frame(
   D1 = c("Green", "Green", "Green", "Green X", "Green", "Green X", "Green", "Yellow", "Green", "Green", "Green", "Green", "Green", "Green", "Yellow", "Green", "Green", "Green", "Green", "Green", "Green", "Green", "Green", "Green", "Green", "Yellow", "Green"),
   D2 = c("Green", "Yellow", "Yellow", "Yellow", "Green X", "Green", "Green", "Yellow", "Yellow", "Green", "Green", "Yellow", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Yellow", "Green", "Green", "Green", "Yellow", "Yellow", "Yellow", "Yellow"),
   D3 = c("Yellow", "Green", "Green", "Yellow", "Yellow", "Green X", "Yellow", "Yellow", "Green", "Green", "Yellow", "Yellow", "Yellow", "Red", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Yellow*", "Green", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Yellow"),
-  D4 = c("Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Purple", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Purple"),
+  D4 = c("Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Purple"),
   D5 = c("Yellow", "Yellow", "Yellow", "Yellow", "Green", "Green", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Yellow"),
   D6 = c("Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Yellow"),
   D7 = c("Yellow", "Green", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Green", "Yellow", "Green", "Green", "Green", "Green", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Green", "Yellow", "Yellow", "Yellow", "Green", "Green", "Green", "Green", "Yellow"),
@@ -72,7 +72,7 @@ p_matrix <- ggplot(ddh_matrix, aes(x = Domain, y = Study)) +
     title = "Diagnostic Screening Criteria / Reporting Status",
     x = NULL,
     y = NULL,
-    caption = "Domains:\nD1: Alpha angle. D2: Beta angle. D3: Femoral head coverage.\nD4: Straight line of ilium, labrum, acetabulum, femoral head, femoral neck.\nD5: Acetabular morphology. D6: Lateral position. D7: Dynamic ultrasound. D8: Clinical stability.\n\nSymbols: [+] Adequate. [-] Inadequate. [X] Measured but abnormal. [?] Pending review.\n[*] Sufficient femoral head coverage noted for 1 of 2 patients. [**] n=19 had abnormal clinical results."
+    caption = "Domains:\nD1: Alpha angle. D2: Beta angle. D3: Femoral head coverage.\nD4: Straight iliac line.\nD5: Acetabular morphology. D6: Lateral position. D7: Dynamic ultrasound. D8: Clinical stability.\n\nSymbols: [+] Adequate. [-] Inadequate. [X] Measured but abnormal. [?] Pending review.\n[*] Sufficient femoral head coverage noted for 1 of 2 patients. [**] n=19 had abnormal clinical results."
   ) +
   
   # Minimalist styling
