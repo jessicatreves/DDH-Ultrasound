@@ -21,6 +21,11 @@ ddh_data <- data.frame(
   check.names = FALSE
 )
 
+ddh_data$Study[ddh_data$Study == "Pan et al. (2022)"] <- "Pan et al. (2022)*"
+
+# Find the specific row and append the double asterisk for the D8 note
+ddh_data$Study[ddh_data$Study == "Roovers et al. (2005)"] <- "Roovers et al. (2005)**"
+
 # 2. Reshape and map data for Cochrane-style traffic light plot
 ddh_matrix <- ddh_data %>%
   pivot_longer(
@@ -72,7 +77,7 @@ p_matrix <- ggplot(ddh_matrix, aes(x = Domain, y = Study)) +
     title = "Diagnostic Screening Criteria / Reporting Status",
     x = NULL,
     y = NULL,
-    caption = "Domains:\nD1: Alpha angle. D2: Beta angle. D3: Femoral head coverage.\nD4: Straight iliac line.\nD5: Acetabular morphology. D6: Lateral position. D7: Dynamic ultrasound. D8: Clinical stability.\n\nSymbols: [+] Adequate. [-] Inadequate. [X] Measured but abnormal. [?] Pending review.\n[*] Sufficient femoral head coverage noted for 1 of 2 patients. [**] n=19 had abnormal clinical results."
+    caption = "Domains:\nD1: Alpha angle. D2: Beta angle. D3: Femoral head coverage. D4: Straight iliac line.\nD5: Acetabular morphology. D6: Lateral position. D7: Dynamic ultrasound. D8: Clinical stability.\n\nSymbols: [+] Adequate. [-] Inadequate. [X] Measured but abnormal. [?] Pending review.\n[*] Sufficient femoral head coverage noted for 1 of 2 patients. [**] n=19 had abnormal clinical results."
   ) +
   
   # Minimalist styling
@@ -86,6 +91,7 @@ p_matrix <- ggplot(ddh_matrix, aes(x = Domain, y = Study)) +
     plot.caption.position = "plot",
     plot.margin = margin(t = 15, r = 15, b = 15, l = 15)
   )
+
 
 # Display the plot
 print(p_matrix)
