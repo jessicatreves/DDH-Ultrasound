@@ -6,7 +6,7 @@ library(dplyr)
 library(tidyr)
 library(scales)
 
-# 1. Input the exact data from your 27-study table
+# 1. Input the exact data from your 26-study table
 ddh_data <- data.frame(
   Study = c(
     "Alshameeri and Rehm (2014)", "Antoniak et al. (2021)", "Brusalis et al. (2017)", "Donnelly et al. (2015)", "Fludder et al. (2023)", "Jones et al. (2006)", "Haertle et al. (2023)", "Imrie et al. (2010)", "Jaiswal et al. (2010)", "Jiang et al. (2026)", "Kim et al. (2022)", "Laborie et al. (2013)", "Kohler and Hell (2003)", "Morris et al. (2019)", "Morris et al. (2021)", "Mulrain et al. (2020)", "Olsen et al. (2018)", "Osarumwense et al. (2007)", "Pan et al. (2022)", "Rafique et al. (2007)", "Roovers et al. (2005)", "Rosendahl et al. (1994)", "Schmitt et al. (2018)", "Tafazal and Flowers (2015)", "Vane et al. (2005)", "Walton et al. (2022)"
@@ -98,7 +98,7 @@ p_bar <- ggplot(ddh_summary, aes(x = Percentage, y = Domain_Label, fill = Base_C
   # Clean academic labeling with requested footnotes
   labs(
     title = "Overall Reporting Frequency of Diagnostic Screening Criteria",
-    subtitle = "Aggregate proportion across all included studies (n = 27)",
+    subtitle = "Aggregate proportion across all included studies (n = 26)",
     x = "Percentage of Studies",
     y = NULL,
     caption = "Symbols: [X] Measured but clearly abnormal. [*] Sufficient femoral head coverage noted for 1 of 2 patients. [**] n=19 had abnormal clinical results."
